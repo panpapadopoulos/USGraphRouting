@@ -1,0 +1,966 @@
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: 
+==============================================================================
+SECTION 1. CITY DATASET
+==============================================================================
+Coverage: 38 cities, 38 states/regions
+Each row is one graph node.
+
+city                 state  timezone  elevation_ft
+-------------------------------------------------------
+Birmingham           AL    Central        644
+Little Rock          AR    Central        335
+Hartford             CT    Eastern         59
+Washington           DC    Eastern         23
+Wilmington           DE    Eastern         92
+Miami                FL    Eastern          6
+Atlanta              GA    Eastern       1050
+Des Moines           IA    Central        955
+Chicago              IL    Central        594
+Indianapolis         IN    Eastern        718
+Wichita              KS    Central       1299
+Louisville           KY    Eastern        466
+New Orleans          LA    Central          7
+Boston               MA    Eastern        141
+Baltimore            MD    Eastern         33
+Portland             ME    Eastern         62
+Detroit              MI    Eastern        656
+Minneapolis          MN    Central        830
+Kansas City          MO    Central        909
+Jackson              MS    Central        279
+Charlotte            NC    Eastern        761
+Fargo                ND    Central        904
+Omaha                NE    Central       1060
+Manchester           NH    Eastern        210
+Newark               NJ    Eastern         13
+New York             NY    Eastern         33
+Columbus             OH    Eastern        902
+Oklahoma City        OK    Central       1201
+Philadelphia         PA    Eastern         39
+Providence           RI    Eastern         75
+Columbia             SC    Eastern        292
+Sioux Falls          SD    Central       1470
+Nashville            TN    Central        597
+Dallas               TX    Central        430
+Richmond             VA    Eastern        166
+Burlington           VT    Eastern        200
+Milwaukee            WI    Central        617
+Charleston           WV    Eastern        597
+
+==============================================================================
+SECTION 2. INPUT GRAPH
+==============================================================================
+Rule used to build edges: connect cities only when their states share a border.
+Graph size: 38 nodes and 78 undirected edges.
+
+Adjacency list with estimated highway mileage:
+Atlanta, GA: Birmingham (165.5 mi), Columbia (227.9 mi), Nashville (253.6 mi), Charlotte (266.9 mi), Miami (715.5 mi)
+Baltimore, MD: Washington (41.2 mi), Wilmington (76.7 mi), Philadelphia (105.7 mi), Richmond (152.1 mi), Charleston (327.9 mi)
+Birmingham, AL: Atlanta (165.5 mi), Nashville (215.6 mi), Jackson (251.5 mi), Miami (786.9 mi)
+Boston, MA: Providence (48.7 mi), Manchester (57.0 mi), Hartford (109.1 mi), Burlington (214.5 mi), New York (224.4 mi)
+Burlington, VT: Manchester (159.0 mi), Boston (214.5 mi), New York (310.5 mi)
+Charleston, WV: Columbus (157.2 mi), Louisville (264.1 mi), Richmond (277.7 mi), Baltimore (327.9 mi), Philadelphia (429.2 mi)
+Charlotte, NC: Columbia (100.8 mi), Atlanta (266.9 mi), Richmond (292.5 mi), Nashville (400.5 mi)
+Chicago, IL: Milwaukee (96.1 mi), Indianapolis (194.5 mi), Louisville (317.8 mi), Des Moines (365.5 mi), Kansas City (486.6 mi)
+Columbia, SC: Charlotte (100.8 mi), Atlanta (227.9 mi)
+Columbus, OH: Charleston (157.2 mi), Detroit (193.3 mi), Indianapolis (198.3 mi), Louisville (223.3 mi), Philadelphia (489.4 mi)
+Dallas, TX: Oklahoma City (224.7 mi), Little Rock (345.1 mi), New Orleans (521.7 mi)
+Des Moines, IA: Omaha (143.7 mi), Kansas City (211.3 mi), Sioux Falls (245.5 mi), Minneapolis (277.3 mi), Milwaukee (364.4 mi), Chicago (365.5 mi)
+Detroit, MI: Columbus (193.3 mi), Indianapolis (283.3 mi), Milwaukee (296.9 mi)
+Fargo, ND: Minneapolis (252.8 mi), Sioux Falls (271.7 mi)
+Hartford, CT: Providence (76.8 mi), Boston (109.1 mi), New York (118.5 mi)
+Indianapolis, IN: Louisville (126.1 mi), Chicago (194.5 mi), Columbus (198.3 mi), Detroit (283.3 mi)
+Jackson, MS: New Orleans (191.6 mi), Little Rock (245.5 mi), Birmingham (251.5 mi), Nashville (389.6 mi)
+Kansas City, MO: Omaha (195.1 mi), Wichita (210.2 mi), Des Moines (211.3 mi), Oklahoma City (352.1 mi), Little Rock (385.0 mi), Chicago (486.6 mi), Nashville (557.2 mi), Louisville (565.4 mi)
+Little Rock, AR: Jackson (245.5 mi), Dallas (345.1 mi), Oklahoma City (353.5 mi), Nashville (383.5 mi), Kansas City (385.0 mi), New Orleans (419.7 mi)
+Louisville, KY: Indianapolis (126.1 mi), Nashville (182.9 mi), Columbus (223.3 mi), Charleston (264.1 mi), Chicago (317.8 mi), Richmond (538.4 mi), Kansas City (565.4 mi)
+Manchester, NH: Boston (57.0 mi), Portland (89.3 mi), Burlington (159.0 mi)
+Miami, FL: Atlanta (715.5 mi), Birmingham (786.9 mi)
+Milwaukee, WI: Chicago (96.1 mi), Detroit (296.9 mi), Minneapolis (351.6 mi), Des Moines (364.4 mi)
+Minneapolis, MN: Sioux Falls (233.7 mi), Fargo (252.8 mi), Des Moines (277.3 mi), Milwaukee (351.6 mi)
+Nashville, TN: Louisville (182.9 mi), Birmingham (215.6 mi), Atlanta (253.6 mi), Little Rock (383.5 mi), Jackson (389.6 mi), Charlotte (400.5 mi), Kansas City (557.2 mi), Richmond (619.7 mi)
+New Orleans, LA: Jackson (191.6 mi), Little Rock (419.7 mi), Dallas (521.7 mi)
+New York, NY: Newark (10.4 mi), Philadelphia (95.0 mi), Hartford (118.5 mi), Boston (224.4 mi), Burlington (310.5 mi)
+Newark, NJ: New York (10.4 mi), Philadelphia (88.8 mi), Wilmington (117.7 mi)
+Oklahoma City, OK: Wichita (181.4 mi), Dallas (224.7 mi), Kansas City (352.1 mi), Little Rock (353.5 mi)
+Omaha, NE: Des Moines (143.7 mi), Sioux Falls (192.6 mi), Kansas City (195.1 mi), Wichita (304.0 mi)
+Philadelphia, PA: Wilmington (29.2 mi), Newark (88.8 mi), New York (95.0 mi), Baltimore (105.7 mi), Charleston (429.2 mi), Columbus (489.4 mi)
+Portland, ME: Manchester (89.3 mi)
+Providence, RI: Boston (48.7 mi), Hartford (76.8 mi)
+Richmond, VA: Washington (114.3 mi), Baltimore (152.1 mi), Charleston (277.7 mi), Charlotte (292.5 mi), Louisville (538.4 mi), Nashville (619.7 mi)
+Sioux Falls, SD: Omaha (192.6 mi), Minneapolis (233.7 mi), Des Moines (245.5 mi), Fargo (271.7 mi)
+Washington, DC: Baltimore (41.2 mi), Richmond (114.3 mi)
+Wichita, KS: Oklahoma City (181.4 mi), Kansas City (210.2 mi), Omaha (304.0 mi)
+Wilmington, DE: Philadelphia (29.2 mi), Baltimore (76.7 mi), Newark (117.7 mi)
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_full_graph.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_full_graph.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: 
+==============================================================================
+TRAVEL PLAN
+==============================================================================
+Plan a trip between two cities using the shortest Dijkstra route.
+Weather window: 2026-01-01 to 2026-03-30
+Driving limit : 8 hours/day at up to 75 mph
+Fuel economy  : 45 mpg baseline
+
+Departure city [Chicago]: Unknown city. Try one of: Atlanta, Baltimore, Birmingham, Boston, Burlington, Charleston, Charlotte, Chicago, Columbia, Columbus, Dallas, Des Moines, Detroit, Fargo, Hartford, Indianapolis, Jackson, Kansas City, Little Rock, Louisville, Manchester, Miami, Milwaukee, Minneapolis, Nashville, New Orleans, New York, Newark, Oklahoma City, Omaha, Philadelphia, Portland, Providence, Richmond, Sioux Falls, Washington, Wichita, Wilmington
+Departure city [Chicago]: Destination city [Miami]: 
+==============================================================================
+TRAVEL PLAN: Dallas → New York
+==============================================================================
+
+Route (7 cities):
+  Dallas -> Little Rock -> Nashville -> Louisville -> Charleston -> Philadelphia -> New York
+
+========================================================
+  Map distance              : 1699.8 miles
+  Elevation-adjusted dist.  : 1699.72 miles
+  Travel days               : 3 (max 8 hrs driving/day)
+  Total hours on road       : 22.66 hrs
+  Gasoline consumed         : 37.77 gallons (45 mpg)
+  Best start date           : 2026-02-08
+  Accumulated weather risk  : 8.0 (average 1.33 per leg)
+========================================================
+
+Leg-by-leg breakdown (6 legs):
+  #    From                 To                     Map mi   Real mi     Slope
+  ---- -------------------- -------------------- -------- --------- ---------
+  1    Dallas               Little Rock             345.1     345.1   -0.0001
+  2    Little Rock          Nashville               383.5     383.6   +0.0001
+  3    Nashville            Louisville              182.9     182.9   -0.0001
+  4    Louisville           Charleston              264.1     264.1   +0.0001
+  5    Charleston           Philadelphia            429.2     429.1   -0.0002
+  6    Philadelphia         New York                 95.0      95.0   -0.0000
+
+Day-by-day itinerary (starting 2026-02-08):
+  Day 1 (2026-02-08) — 600.0 mi, 8.0 hrs driving:
+    Dallas -> Little Rock  345.1 mi  weather: cloud/cloud
+    Little Rock -> Nashville  383.6 mi  weather: cloud/sun
+  Day 2 (2026-02-09) — 600.0 mi, 8.0 hrs driving:
+    Little Rock -> Nashville  383.6 mi  weather: sun/rain
+    Nashville -> Louisville  182.9 mi  weather: rain/sun
+    Louisville -> Charleston  264.1 mi  weather: sun/sun
+    Charleston -> Philadelphia  429.1 mi  weather: sun/cloud
+  Day 3 (2026-02-10) — 499.7 mi, 6.7 hrs driving:
+    Charleston -> Philadelphia  429.1 mi  weather: rain/sun
+    Philadelphia -> New York  95.0 mi  weather: sun/sun
+Performance: 0.159 ms, CPU 0.0%, peak memory 4.7 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/travel_plan_dallas_to_new_york.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/travel_plan_dallas_to_new_york.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city for BFS [Chicago]: 
+==============================================================================
+SECTION 3. BFS RESULT
+==============================================================================
+Purpose: BFS checks the network level by level from the start city.
+Visited nodes: 38
+Visit order: Chicago -> Milwaukee -> Indianapolis -> Louisville -> Des Moines -> Kansas City -> Detroit -> Minneapolis -> Columbus -> Nashville -> Charleston -> Richmond -> Omaha -> Sioux Falls -> Wichita -> Oklahoma City -> Little Rock -> Fargo -> Philadelphia -> Birmingham -> Atlanta -> Jackson -> Charlotte -> Baltimore -> Washington -> Dallas -> New Orleans -> Wilmington -> Newark -> New York -> Miami -> Columbia -> Hartford -> Boston -> Burlington -> Providence -> Manchester -> Portland
+
+BFS traversal graph:
+  Chicago -> Milwaukee  96.1 mi
+  Chicago -> Indianapolis  194.5 mi
+  Chicago -> Louisville  317.8 mi
+  Chicago -> Des Moines  365.5 mi
+  Chicago -> Kansas City  486.6 mi
+  Milwaukee -> Detroit  296.9 mi
+  Milwaukee -> Minneapolis  351.6 mi
+  Indianapolis -> Columbus  198.3 mi
+  Louisville -> Nashville  182.9 mi
+  Louisville -> Charleston  264.1 mi
+  Louisville -> Richmond  538.4 mi
+  Des Moines -> Omaha  143.7 mi
+  Des Moines -> Sioux Falls  245.5 mi
+  Kansas City -> Wichita  210.2 mi
+  Kansas City -> Oklahoma City  352.1 mi
+  Kansas City -> Little Rock  385.0 mi
+  Minneapolis -> Fargo  252.8 mi
+  Columbus -> Philadelphia  489.4 mi
+  Nashville -> Birmingham  215.6 mi
+  Nashville -> Atlanta  253.6 mi
+  Nashville -> Jackson  389.6 mi
+  Nashville -> Charlotte  400.5 mi
+  Charleston -> Baltimore  327.9 mi
+  Richmond -> Washington  114.3 mi
+  Oklahoma City -> Dallas  224.7 mi
+  Little Rock -> New Orleans  419.7 mi
+  Philadelphia -> Wilmington  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Philadelphia -> New York  95.0 mi
+  Birmingham -> Miami  786.9 mi
+  Atlanta -> Columbia  227.9 mi
+  New York -> Hartford  118.5 mi
+  New York -> Boston  224.4 mi
+  New York -> Burlington  310.5 mi
+  Hartford -> Providence  76.8 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+Interpretation: this is useful for reachability and broad expansion, not shortest weighted distance.
+Performance: 0.153 ms, CPU 0.0%, peak memory 5.1 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_bfs_chicago.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_bfs_chicago.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city for DFS [Chicago]: 
+==============================================================================
+SECTION 4. DFS RESULT
+==============================================================================
+Purpose: DFS follows one branch deeply before returning to unexplored branches.
+Visited nodes: 38
+Visit order: Dallas -> Oklahoma City -> Wichita -> Kansas City -> Omaha -> Des Moines -> Sioux Falls -> Minneapolis -> Fargo -> Milwaukee -> Chicago -> Indianapolis -> Louisville -> Nashville -> Birmingham -> Atlanta -> Columbia -> Charlotte -> Richmond -> Washington -> Baltimore -> Wilmington -> Philadelphia -> Newark -> New York -> Hartford -> Providence -> Boston -> Manchester -> Portland -> Burlington -> Charleston -> Columbus -> Detroit -> Miami -> Jackson -> New Orleans -> Little Rock
+
+DFS traversal graph:
+  Dallas -> Oklahoma City  224.7 mi
+  Oklahoma City -> Wichita  181.4 mi
+  Wichita -> Kansas City  210.2 mi
+  Kansas City -> Omaha  195.1 mi
+  Omaha -> Des Moines  143.7 mi
+  Des Moines -> Sioux Falls  245.5 mi
+  Sioux Falls -> Minneapolis  233.7 mi
+  Minneapolis -> Fargo  252.8 mi
+  Minneapolis -> Milwaukee  351.6 mi
+  Milwaukee -> Chicago  96.1 mi
+  Chicago -> Indianapolis  194.5 mi
+  Indianapolis -> Louisville  126.1 mi
+  Louisville -> Nashville  182.9 mi
+  Nashville -> Birmingham  215.6 mi
+  Birmingham -> Atlanta  165.5 mi
+  Atlanta -> Columbia  227.9 mi
+  Columbia -> Charlotte  100.8 mi
+  Charlotte -> Richmond  292.5 mi
+  Richmond -> Washington  114.3 mi
+  Washington -> Baltimore  41.2 mi
+  Baltimore -> Wilmington  76.7 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Newark -> New York  10.4 mi
+  New York -> Hartford  118.5 mi
+  Hartford -> Providence  76.8 mi
+  Providence -> Boston  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+  Manchester -> Burlington  159.0 mi
+  Philadelphia -> Charleston  429.2 mi
+  Charleston -> Columbus  157.2 mi
+  Columbus -> Detroit  193.3 mi
+  Atlanta -> Miami  715.5 mi
+  Birmingham -> Jackson  251.5 mi
+  Jackson -> New Orleans  191.6 mi
+  New Orleans -> Little Rock  419.7 mi
+Interpretation: this traversal is good for structural exploration, but it is not optimized for distance.
+Performance: 0.163 ms, CPU 0.0%, peak memory 4.2 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_dfs_dallas.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_dfs_dallas.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city for Prim [Chicago]: 
+==============================================================================
+PRIM RESULT
+==============================================================================
+Purpose: Prim grows one minimum spanning tree outward from the selected start city.
+MST edges selected: 37
+Total MST distance: 6429.2 miles
+
+Minimum spanning tree graph:
+  Miami -> Atlanta  715.5 mi
+  Atlanta -> Birmingham  165.5 mi
+  Birmingham -> Nashville  215.6 mi
+  Nashville -> Louisville  182.9 mi
+  Louisville -> Indianapolis  126.1 mi
+  Indianapolis -> Chicago  194.5 mi
+  Chicago -> Milwaukee  96.1 mi
+  Indianapolis -> Columbus  198.3 mi
+  Columbus -> Charleston  157.2 mi
+  Columbus -> Detroit  193.3 mi
+  Atlanta -> Columbia  227.9 mi
+  Columbia -> Charlotte  100.8 mi
+  Birmingham -> Jackson  251.5 mi
+  Jackson -> New Orleans  191.6 mi
+  Jackson -> Little Rock  245.5 mi
+  Charleston -> Richmond  277.7 mi
+  Richmond -> Washington  114.3 mi
+  Washington -> Baltimore  41.2 mi
+  Baltimore -> Wilmington  76.7 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Newark -> New York  10.4 mi
+  New York -> Hartford  118.5 mi
+  Hartford -> Providence  76.8 mi
+  Providence -> Boston  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+  Manchester -> Burlington  159.0 mi
+  Little Rock -> Dallas  345.1 mi
+  Dallas -> Oklahoma City  224.7 mi
+  Oklahoma City -> Wichita  181.4 mi
+  Wichita -> Kansas City  210.2 mi
+  Kansas City -> Omaha  195.1 mi
+  Omaha -> Des Moines  143.7 mi
+  Omaha -> Sioux Falls  192.6 mi
+  Sioux Falls -> Minneapolis  233.7 mi
+  Minneapolis -> Fargo  252.8 mi
+Interpretation: the MST connects all cities with low total mileage, but it is not a point-to-point route.
+Performance: 0.307 ms, CPU 0.0%, peak memory 4.5 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_prim_miami.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_prim_miami.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: 
+==============================================================================
+KRUSKAL RESULT
+==============================================================================
+Purpose: Kruskal sorts all edges and adds the next cheapest edge that does not create a cycle.
+MST edges selected: 37
+Total MST distance: 6429.2 miles
+
+Minimum spanning tree graph:
+  Newark -> New York  10.4 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Washington -> Baltimore  41.2 mi
+  Boston -> Providence  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Wilmington -> Baltimore  76.7 mi
+  Hartford -> Providence  76.8 mi
+  Newark -> Philadelphia  88.8 mi
+  Portland -> Manchester  89.3 mi
+  Chicago -> Milwaukee  96.1 mi
+  Charlotte -> Columbia  100.8 mi
+  Washington -> Richmond  114.3 mi
+  Hartford -> New York  118.5 mi
+  Indianapolis -> Louisville  126.1 mi
+  Des Moines -> Omaha  143.7 mi
+  Columbus -> Charleston  157.2 mi
+  Manchester -> Burlington  159.0 mi
+  Birmingham -> Atlanta  165.5 mi
+  Wichita -> Oklahoma City  181.4 mi
+  Louisville -> Nashville  182.9 mi
+  New Orleans -> Jackson  191.6 mi
+  Omaha -> Sioux Falls  192.6 mi
+  Detroit -> Columbus  193.3 mi
+  Chicago -> Indianapolis  194.5 mi
+  Kansas City -> Omaha  195.1 mi
+  Indianapolis -> Columbus  198.3 mi
+  Wichita -> Kansas City  210.2 mi
+  Birmingham -> Nashville  215.6 mi
+  Oklahoma City -> Dallas  224.7 mi
+  Atlanta -> Columbia  227.9 mi
+  Minneapolis -> Sioux Falls  233.7 mi
+  Little Rock -> Jackson  245.5 mi
+  Birmingham -> Jackson  251.5 mi
+  Minneapolis -> Fargo  252.8 mi
+  Richmond -> Charleston  277.7 mi
+  Little Rock -> Dallas  345.1 mi
+  Miami -> Atlanta  715.5 mi
+Interpretation: the MST connects all cities with low total mileage, but it is not a point-to-point route.
+Performance: 0.296 ms, CPU 0.0%, peak memory 16.7 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_kruskal_mst.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_kruskal_mst.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city [Chicago]: Destination city [Miami]: 
+==============================================================================
+DIJKSTRA RESULT: Chicago TO Miami
+==============================================================================
+Shortest path: Chicago -> Louisville -> Nashville -> Atlanta -> Miami
+Map distance: 1469.8 miles
+
+Shortest-path graph:
+  Chicago -> Louisville  317.8 mi
+  Louisville -> Nashville  182.9 mi
+  Nashville -> Atlanta  253.6 mi
+  Atlanta -> Miami  715.5 mi
+
+Travel metrics:
+  elevation-adjusted real distance: 1469.69 miles
+  best start date: 2026-01-09
+  accumulated weather risk: 4.0 (average 1.0 per leg)
+  gasoline consumption: 32.66 gallons
+Performance: 0.355 ms, CPU 0.0%, peak memory 3.9 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_dijkstra_chicago_to_miami.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_dijkstra_chicago_to_miami.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city [Chicago]: Destination city [Boston]: 
+==============================================================================
+BELLMAN-FORD RESULT: Boston TO Chicago
+==============================================================================
+Shortest path: Boston -> New York -> Philadelphia -> Columbus -> Indianapolis -> Chicago
+Map distance: 1201.6 miles
+
+Shortest-path graph:
+  Boston -> New York  224.4 mi
+  New York -> Philadelphia  95.0 mi
+  Philadelphia -> Columbus  489.4 mi
+  Columbus -> Indianapolis  198.3 mi
+  Indianapolis -> Chicago  194.5 mi
+
+Travel metrics:
+  elevation-adjusted real distance: 1201.69 miles
+  best start date: 2026-01-17
+  accumulated weather risk: 7.0 (average 1.4 per leg)
+  gasoline consumption: 26.7 gallons
+Performance: 0.332 ms, CPU 0.0%, peak memory 6.5 KB, disk read/write 0.0/0.0 KB
+Saved map PNG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_bellman_ford_boston_to_chicago.png
+Saved map SVG: /mnt/c/Users/panos/Desktop/algppro3/output/menu_bellman_ford_boston_to_chicago.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Start city for traversal and route [Chicago]: Destination city for shortest path [Miami]: 
+==============================================================================
+SECTION 1. CITY DATASET
+==============================================================================
+Coverage: 38 cities, 38 states/regions
+Each row is one graph node.
+
+city                 state  timezone  elevation_ft
+-------------------------------------------------------
+Birmingham           AL    Central        644
+Little Rock          AR    Central        335
+Hartford             CT    Eastern         59
+Washington           DC    Eastern         23
+Wilmington           DE    Eastern         92
+Miami                FL    Eastern          6
+Atlanta              GA    Eastern       1050
+Des Moines           IA    Central        955
+Chicago              IL    Central        594
+Indianapolis         IN    Eastern        718
+Wichita              KS    Central       1299
+Louisville           KY    Eastern        466
+New Orleans          LA    Central          7
+Boston               MA    Eastern        141
+Baltimore            MD    Eastern         33
+Portland             ME    Eastern         62
+Detroit              MI    Eastern        656
+Minneapolis          MN    Central        830
+Kansas City          MO    Central        909
+Jackson              MS    Central        279
+Charlotte            NC    Eastern        761
+Fargo                ND    Central        904
+Omaha                NE    Central       1060
+Manchester           NH    Eastern        210
+Newark               NJ    Eastern         13
+New York             NY    Eastern         33
+Columbus             OH    Eastern        902
+Oklahoma City        OK    Central       1201
+Philadelphia         PA    Eastern         39
+Providence           RI    Eastern         75
+Columbia             SC    Eastern        292
+Sioux Falls          SD    Central       1470
+Nashville            TN    Central        597
+Dallas               TX    Central        430
+Richmond             VA    Eastern        166
+Burlington           VT    Eastern        200
+Milwaukee            WI    Central        617
+Charleston           WV    Eastern        597
+
+==============================================================================
+SECTION 2. INPUT GRAPH
+==============================================================================
+Rule used to build edges: connect cities only when their states share a border.
+Graph size: 38 nodes and 78 undirected edges.
+
+Adjacency list with estimated highway mileage:
+Atlanta, GA: Birmingham (165.5 mi), Columbia (227.9 mi), Nashville (253.6 mi), Charlotte (266.9 mi), Miami (715.5 mi)
+Baltimore, MD: Washington (41.2 mi), Wilmington (76.7 mi), Philadelphia (105.7 mi), Richmond (152.1 mi), Charleston (327.9 mi)
+Birmingham, AL: Atlanta (165.5 mi), Nashville (215.6 mi), Jackson (251.5 mi), Miami (786.9 mi)
+Boston, MA: Providence (48.7 mi), Manchester (57.0 mi), Hartford (109.1 mi), Burlington (214.5 mi), New York (224.4 mi)
+Burlington, VT: Manchester (159.0 mi), Boston (214.5 mi), New York (310.5 mi)
+Charleston, WV: Columbus (157.2 mi), Louisville (264.1 mi), Richmond (277.7 mi), Baltimore (327.9 mi), Philadelphia (429.2 mi)
+Charlotte, NC: Columbia (100.8 mi), Atlanta (266.9 mi), Richmond (292.5 mi), Nashville (400.5 mi)
+Chicago, IL: Milwaukee (96.1 mi), Indianapolis (194.5 mi), Louisville (317.8 mi), Des Moines (365.5 mi), Kansas City (486.6 mi)
+Columbia, SC: Charlotte (100.8 mi), Atlanta (227.9 mi)
+Columbus, OH: Charleston (157.2 mi), Detroit (193.3 mi), Indianapolis (198.3 mi), Louisville (223.3 mi), Philadelphia (489.4 mi)
+Dallas, TX: Oklahoma City (224.7 mi), Little Rock (345.1 mi), New Orleans (521.7 mi)
+Des Moines, IA: Omaha (143.7 mi), Kansas City (211.3 mi), Sioux Falls (245.5 mi), Minneapolis (277.3 mi), Milwaukee (364.4 mi), Chicago (365.5 mi)
+Detroit, MI: Columbus (193.3 mi), Indianapolis (283.3 mi), Milwaukee (296.9 mi)
+Fargo, ND: Minneapolis (252.8 mi), Sioux Falls (271.7 mi)
+Hartford, CT: Providence (76.8 mi), Boston (109.1 mi), New York (118.5 mi)
+Indianapolis, IN: Louisville (126.1 mi), Chicago (194.5 mi), Columbus (198.3 mi), Detroit (283.3 mi)
+Jackson, MS: New Orleans (191.6 mi), Little Rock (245.5 mi), Birmingham (251.5 mi), Nashville (389.6 mi)
+Kansas City, MO: Omaha (195.1 mi), Wichita (210.2 mi), Des Moines (211.3 mi), Oklahoma City (352.1 mi), Little Rock (385.0 mi), Chicago (486.6 mi), Nashville (557.2 mi), Louisville (565.4 mi)
+Little Rock, AR: Jackson (245.5 mi), Dallas (345.1 mi), Oklahoma City (353.5 mi), Nashville (383.5 mi), Kansas City (385.0 mi), New Orleans (419.7 mi)
+Louisville, KY: Indianapolis (126.1 mi), Nashville (182.9 mi), Columbus (223.3 mi), Charleston (264.1 mi), Chicago (317.8 mi), Richmond (538.4 mi), Kansas City (565.4 mi)
+Manchester, NH: Boston (57.0 mi), Portland (89.3 mi), Burlington (159.0 mi)
+Miami, FL: Atlanta (715.5 mi), Birmingham (786.9 mi)
+Milwaukee, WI: Chicago (96.1 mi), Detroit (296.9 mi), Minneapolis (351.6 mi), Des Moines (364.4 mi)
+Minneapolis, MN: Sioux Falls (233.7 mi), Fargo (252.8 mi), Des Moines (277.3 mi), Milwaukee (351.6 mi)
+Nashville, TN: Louisville (182.9 mi), Birmingham (215.6 mi), Atlanta (253.6 mi), Little Rock (383.5 mi), Jackson (389.6 mi), Charlotte (400.5 mi), Kansas City (557.2 mi), Richmond (619.7 mi)
+New Orleans, LA: Jackson (191.6 mi), Little Rock (419.7 mi), Dallas (521.7 mi)
+New York, NY: Newark (10.4 mi), Philadelphia (95.0 mi), Hartford (118.5 mi), Boston (224.4 mi), Burlington (310.5 mi)
+Newark, NJ: New York (10.4 mi), Philadelphia (88.8 mi), Wilmington (117.7 mi)
+Oklahoma City, OK: Wichita (181.4 mi), Dallas (224.7 mi), Kansas City (352.1 mi), Little Rock (353.5 mi)
+Omaha, NE: Des Moines (143.7 mi), Sioux Falls (192.6 mi), Kansas City (195.1 mi), Wichita (304.0 mi)
+Philadelphia, PA: Wilmington (29.2 mi), Newark (88.8 mi), New York (95.0 mi), Baltimore (105.7 mi), Charleston (429.2 mi), Columbus (489.4 mi)
+Portland, ME: Manchester (89.3 mi)
+Providence, RI: Boston (48.7 mi), Hartford (76.8 mi)
+Richmond, VA: Washington (114.3 mi), Baltimore (152.1 mi), Charleston (277.7 mi), Charlotte (292.5 mi), Louisville (538.4 mi), Nashville (619.7 mi)
+Sioux Falls, SD: Omaha (192.6 mi), Minneapolis (233.7 mi), Des Moines (245.5 mi), Fargo (271.7 mi)
+Washington, DC: Baltimore (41.2 mi), Richmond (114.3 mi)
+Wichita, KS: Oklahoma City (181.4 mi), Kansas City (210.2 mi), Omaha (304.0 mi)
+Wilmington, DE: Philadelphia (29.2 mi), Baltimore (76.7 mi), Newark (117.7 mi)
+
+==============================================================================
+SECTION 3. BFS RESULT
+==============================================================================
+Purpose: BFS checks the network level by level from the start city.
+Visited nodes: 38
+Visit order: Chicago -> Milwaukee -> Indianapolis -> Louisville -> Des Moines -> Kansas City -> Detroit -> Minneapolis -> Columbus -> Nashville -> Charleston -> Richmond -> Omaha -> Sioux Falls -> Wichita -> Oklahoma City -> Little Rock -> Fargo -> Philadelphia -> Birmingham -> Atlanta -> Jackson -> Charlotte -> Baltimore -> Washington -> Dallas -> New Orleans -> Wilmington -> Newark -> New York -> Miami -> Columbia -> Hartford -> Boston -> Burlington -> Providence -> Manchester -> Portland
+
+BFS traversal graph:
+  Chicago -> Milwaukee  96.1 mi
+  Chicago -> Indianapolis  194.5 mi
+  Chicago -> Louisville  317.8 mi
+  Chicago -> Des Moines  365.5 mi
+  Chicago -> Kansas City  486.6 mi
+  Milwaukee -> Detroit  296.9 mi
+  Milwaukee -> Minneapolis  351.6 mi
+  Indianapolis -> Columbus  198.3 mi
+  Louisville -> Nashville  182.9 mi
+  Louisville -> Charleston  264.1 mi
+  Louisville -> Richmond  538.4 mi
+  Des Moines -> Omaha  143.7 mi
+  Des Moines -> Sioux Falls  245.5 mi
+  Kansas City -> Wichita  210.2 mi
+  Kansas City -> Oklahoma City  352.1 mi
+  Kansas City -> Little Rock  385.0 mi
+  Minneapolis -> Fargo  252.8 mi
+  Columbus -> Philadelphia  489.4 mi
+  Nashville -> Birmingham  215.6 mi
+  Nashville -> Atlanta  253.6 mi
+  Nashville -> Jackson  389.6 mi
+  Nashville -> Charlotte  400.5 mi
+  Charleston -> Baltimore  327.9 mi
+  Richmond -> Washington  114.3 mi
+  Oklahoma City -> Dallas  224.7 mi
+  Little Rock -> New Orleans  419.7 mi
+  Philadelphia -> Wilmington  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Philadelphia -> New York  95.0 mi
+  Birmingham -> Miami  786.9 mi
+  Atlanta -> Columbia  227.9 mi
+  New York -> Hartford  118.5 mi
+  New York -> Boston  224.4 mi
+  New York -> Burlington  310.5 mi
+  Hartford -> Providence  76.8 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+Interpretation: this is useful for reachability and broad expansion, not shortest weighted distance.
+Performance: 0.117 ms, CPU 0.0%, peak memory 4.7 KB, disk read/write 0.0/0.0 KB
+
+==============================================================================
+SECTION 4. DFS RESULT
+==============================================================================
+Purpose: DFS follows one branch deeply before returning to unexplored branches.
+Visited nodes: 38
+Visit order: Chicago -> Milwaukee -> Detroit -> Columbus -> Charleston -> Louisville -> Indianapolis -> Nashville -> Birmingham -> Atlanta -> Columbia -> Charlotte -> Richmond -> Washington -> Baltimore -> Wilmington -> Philadelphia -> Newark -> New York -> Hartford -> Providence -> Boston -> Manchester -> Portland -> Burlington -> Miami -> Jackson -> New Orleans -> Little Rock -> Dallas -> Oklahoma City -> Wichita -> Kansas City -> Omaha -> Des Moines -> Sioux Falls -> Minneapolis -> Fargo
+
+DFS traversal graph:
+  Chicago -> Milwaukee  96.1 mi
+  Milwaukee -> Detroit  296.9 mi
+  Detroit -> Columbus  193.3 mi
+  Columbus -> Charleston  157.2 mi
+  Charleston -> Louisville  264.1 mi
+  Louisville -> Indianapolis  126.1 mi
+  Louisville -> Nashville  182.9 mi
+  Nashville -> Birmingham  215.6 mi
+  Birmingham -> Atlanta  165.5 mi
+  Atlanta -> Columbia  227.9 mi
+  Columbia -> Charlotte  100.8 mi
+  Charlotte -> Richmond  292.5 mi
+  Richmond -> Washington  114.3 mi
+  Washington -> Baltimore  41.2 mi
+  Baltimore -> Wilmington  76.7 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Newark -> New York  10.4 mi
+  New York -> Hartford  118.5 mi
+  Hartford -> Providence  76.8 mi
+  Providence -> Boston  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+  Manchester -> Burlington  159.0 mi
+  Atlanta -> Miami  715.5 mi
+  Birmingham -> Jackson  251.5 mi
+  Jackson -> New Orleans  191.6 mi
+  New Orleans -> Little Rock  419.7 mi
+  Little Rock -> Dallas  345.1 mi
+  Dallas -> Oklahoma City  224.7 mi
+  Oklahoma City -> Wichita  181.4 mi
+  Wichita -> Kansas City  210.2 mi
+  Kansas City -> Omaha  195.1 mi
+  Omaha -> Des Moines  143.7 mi
+  Des Moines -> Sioux Falls  245.5 mi
+  Sioux Falls -> Minneapolis  233.7 mi
+  Minneapolis -> Fargo  252.8 mi
+Interpretation: this traversal is good for structural exploration, but it is not optimized for distance.
+Performance: 0.052 ms, CPU 0.0%, peak memory 3.7 KB, disk read/write 0.0/0.0 KB
+
+==============================================================================
+PRIM RESULT
+==============================================================================
+Purpose: Prim grows one minimum spanning tree outward from the start city.
+MST edges selected: 37
+Total MST distance: 6429.2 miles
+
+Minimum spanning tree graph:
+  Chicago -> Milwaukee  96.1 mi
+  Chicago -> Indianapolis  194.5 mi
+  Indianapolis -> Louisville  126.1 mi
+  Louisville -> Nashville  182.9 mi
+  Indianapolis -> Columbus  198.3 mi
+  Columbus -> Charleston  157.2 mi
+  Columbus -> Detroit  193.3 mi
+  Nashville -> Birmingham  215.6 mi
+  Birmingham -> Atlanta  165.5 mi
+  Atlanta -> Columbia  227.9 mi
+  Columbia -> Charlotte  100.8 mi
+  Birmingham -> Jackson  251.5 mi
+  Jackson -> New Orleans  191.6 mi
+  Jackson -> Little Rock  245.5 mi
+  Charleston -> Richmond  277.7 mi
+  Richmond -> Washington  114.3 mi
+  Washington -> Baltimore  41.2 mi
+  Baltimore -> Wilmington  76.7 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Philadelphia -> Newark  88.8 mi
+  Newark -> New York  10.4 mi
+  New York -> Hartford  118.5 mi
+  Hartford -> Providence  76.8 mi
+  Providence -> Boston  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Manchester -> Portland  89.3 mi
+  Manchester -> Burlington  159.0 mi
+  Little Rock -> Dallas  345.1 mi
+  Dallas -> Oklahoma City  224.7 mi
+  Oklahoma City -> Wichita  181.4 mi
+  Wichita -> Kansas City  210.2 mi
+  Kansas City -> Omaha  195.1 mi
+  Omaha -> Des Moines  143.7 mi
+  Omaha -> Sioux Falls  192.6 mi
+  Sioux Falls -> Minneapolis  233.7 mi
+  Minneapolis -> Fargo  252.8 mi
+  Atlanta -> Miami  715.5 mi
+Interpretation: the MST connects all cities with low total mileage, but it is not a point-to-point route.
+Performance: 0.075 ms, CPU 0.0%, peak memory 3.6 KB, disk read/write 0.0/0.0 KB
+
+==============================================================================
+KRUSKAL RESULT
+==============================================================================
+Purpose: Kruskal sorts all edges and avoids cycles.
+MST edges selected: 37
+Total MST distance: 6429.2 miles
+
+Minimum spanning tree graph:
+  Newark -> New York  10.4 mi
+  Wilmington -> Philadelphia  29.2 mi
+  Washington -> Baltimore  41.2 mi
+  Boston -> Providence  48.7 mi
+  Boston -> Manchester  57.0 mi
+  Wilmington -> Baltimore  76.7 mi
+  Hartford -> Providence  76.8 mi
+  Newark -> Philadelphia  88.8 mi
+  Portland -> Manchester  89.3 mi
+  Chicago -> Milwaukee  96.1 mi
+  Charlotte -> Columbia  100.8 mi
+  Washington -> Richmond  114.3 mi
+  Hartford -> New York  118.5 mi
+  Indianapolis -> Louisville  126.1 mi
+  Des Moines -> Omaha  143.7 mi
+  Columbus -> Charleston  157.2 mi
+  Manchester -> Burlington  159.0 mi
+  Birmingham -> Atlanta  165.5 mi
+  Wichita -> Oklahoma City  181.4 mi
+  Louisville -> Nashville  182.9 mi
+  New Orleans -> Jackson  191.6 mi
+  Omaha -> Sioux Falls  192.6 mi
+  Detroit -> Columbus  193.3 mi
+  Chicago -> Indianapolis  194.5 mi
+  Kansas City -> Omaha  195.1 mi
+  Indianapolis -> Columbus  198.3 mi
+  Wichita -> Kansas City  210.2 mi
+  Birmingham -> Nashville  215.6 mi
+  Oklahoma City -> Dallas  224.7 mi
+  Atlanta -> Columbia  227.9 mi
+  Minneapolis -> Sioux Falls  233.7 mi
+  Little Rock -> Jackson  245.5 mi
+  Birmingham -> Jackson  251.5 mi
+  Minneapolis -> Fargo  252.8 mi
+  Richmond -> Charleston  277.7 mi
+  Little Rock -> Dallas  345.1 mi
+  Miami -> Atlanta  715.5 mi
+Interpretation: the MST connects all cities with low total mileage, but it is not a point-to-point route.
+Performance: 0.211 ms, CPU 0.0%, peak memory 13.8 KB, disk read/write 0.0/0.0 KB
+
+==============================================================================
+DIJKSTRA RESULT: Chicago TO Miami
+==============================================================================
+Shortest path: Chicago -> Louisville -> Nashville -> Atlanta -> Miami
+Map distance: 1469.8 miles
+
+Shortest-path graph:
+  Chicago -> Louisville  317.8 mi
+  Louisville -> Nashville  182.9 mi
+  Nashville -> Atlanta  253.6 mi
+  Atlanta -> Miami  715.5 mi
+
+Travel metrics:
+  elevation-adjusted real distance: 1469.69 miles
+  best start date: 2026-01-09
+  accumulated weather risk: 4.0 (average 1.0 per leg)
+  gasoline consumption: 32.66 gallons
+Performance: 0.089 ms, CPU 0.0%, peak memory 4.1 KB, disk read/write 0.0/0.0 KB
+
+==============================================================================
+BELLMAN-FORD RESULT: Chicago TO Miami
+==============================================================================
+Shortest path: Chicago -> Louisville -> Nashville -> Atlanta -> Miami
+Map distance: 1469.8 miles
+
+Shortest-path graph:
+  Chicago -> Louisville  317.8 mi
+  Louisville -> Nashville  182.9 mi
+  Nashville -> Atlanta  253.6 mi
+  Atlanta -> Miami  715.5 mi
+
+Travel metrics:
+  elevation-adjusted real distance: 1469.69 miles
+  best start date: 2026-01-09
+  accumulated weather risk: 4.0 (average 1.0 per leg)
+  gasoline consumption: 32.66 gallons
+Performance: 0.174 ms, CPU 0.0%, peak memory 4.2 KB, disk read/write 0.0/0.0 KB
+
+SECTION 7. PERFORMANCE MONITOR
+algorithm        elapsed_ms   cpu_%   peak_mem_kb   disk_read_kb   disk_write_kb
+BFS                 0.117     0.0           4.7            0.0             0.0
+DFS                 0.052     0.0           3.7            0.0             0.0
+Prim                0.075     0.0           3.6            0.0             0.0
+Kruskal             0.211     0.0          13.8            0.0             0.0
+Dijkstra            0.089     0.0           4.1            0.0             0.0
+Bellman-Ford        0.174     0.0           4.2            0.0             0.0
+
+Saved map files:
+- /mnt/c/Users/panos/Desktop/algppro3/output/full_graph.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/full_graph.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/bfs_graph.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/bfs_graph.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/dfs_graph.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/dfs_graph.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/prim_mst.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/prim_mst.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/kruskal_mst.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/kruskal_mst.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/dijkstra_route.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/dijkstra_route.svg
+- /mnt/c/Users/panos/Desktop/algppro3/output/bellman_ford_route.png
+- /mnt/c/Users/panos/Desktop/algppro3/output/bellman_ford_route.svg
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+Could not open image automatically: [Errno 2] No such file or directory: 'xdg-open'
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: 
+==============================================================================
+COMPARISON 1. BFS VS DFS
+==============================================================================
+Five cases compare traversal order and runtime from the same start city.
+case  start city       bfs_ms   dfs_ms   same_nodes   first_bfs_path
+1     Chicago           0.094   0.081 True       Chicago -> Milwaukee -> Indianapolis -> Louisville -> Des Moines
+2     Dallas            0.046   0.057 True       Dallas -> Oklahoma City -> Little Rock -> New Orleans -> Wichita
+3     Boston            0.139   0.053 True       Boston -> Providence -> Manchester -> Hartford -> Burlington
+4     Atlanta           0.043   0.075 True       Atlanta -> Birmingham -> Columbia -> Nashville -> Charlotte
+5     Minneapolis       0.044   0.077 True       Minneapolis -> Sioux Falls -> Fargo -> Des Moines -> Milwaukee
+Observation: BFS and DFS should visit the same connected component, but their visit orders differ.
+
+==============================================================================
+COMPARISON 2. PRIM VS KRUSKAL
+==============================================================================
+Five cases run Prim from different start cities and compare it with Kruskal.
+case  prim_start       prim_ms  kruskal_ms  prim_miles  kruskal_miles
+1     Chicago            0.082      0.294      6429.2         6429.2
+2     Dallas             0.096      0.283      6429.2         6429.2
+3     Boston             0.143      0.328      6429.2         6429.2
+4     Atlanta            0.137      0.196      6429.2         6429.2
+5     Minneapolis        0.094      0.193      6429.2         6429.2
+Observation: Prim and Kruskal should produce the same MST total even if the selected edges appear in a different order.
+
+==============================================================================
+COMPARISON 3. DIJKSTRA VS BELLMAN-FORD
+==============================================================================
+Five cases compare shortest-path distance and runtime.
+case  route                              dijkstra_ms  bellman_ms  same_distance  miles
+1     Chicago to Miami                        0.121      0.190 True           1469.8
+      Dijkstra:     Chicago -> Louisville -> Nashville -> Atlanta -> Miami
+      Bellman-Ford: Chicago -> Louisville -> Nashville -> Atlanta -> Miami
+2     Dallas to Boston                        0.095      0.275 True           1924.2
+      Dijkstra:     Dallas -> Little Rock -> Nashville -> Louisville -> Charleston -> Philadelphia -> New York -> Boston
+      Bellman-Ford: Dallas -> Little Rock -> Nashville -> Louisville -> Charleston -> Philadelphia -> New York -> Boston
+3     Minneapolis to Atlanta                  0.054      0.183 True           1202.0
+      Dijkstra:     Minneapolis -> Milwaukee -> Chicago -> Louisville -> Nashville -> Atlanta
+      Bellman-Ford: Minneapolis -> Milwaukee -> Chicago -> Louisville -> Nashville -> Atlanta
+4     New Orleans to New York                 0.090      0.214 True           1520.8
+      Dijkstra:     New Orleans -> Jackson -> Birmingham -> Atlanta -> Charlotte -> Richmond -> Baltimore -> Philadelphia -> New York
+      Bellman-Ford: New Orleans -> Jackson -> Birmingham -> Atlanta -> Charlotte -> Richmond -> Baltimore -> Philadelphia -> New York
+5     Oklahoma City to Washington             0.080      0.233 True           1471.0
+      Dijkstra:     Oklahoma City -> Little Rock -> Nashville -> Richmond -> Washington
+      Bellman-Ford: Oklahoma City -> Little Rock -> Nashville -> Richmond -> Washington
+Observation: both algorithms return the same shortest distances. Dijkstra is usually faster here because all edge weights are positive.
+
+==============================================================================
+CENTRAL/EASTERN US GRAPH ROUTE MENU
+==============================================================================
+1.  Show cities and graph
+2.  Travel Plan (Dijkstra best path + travel info)
+3.  Run BFS
+4.  Run DFS
+5.  Run Prim
+6.  Run Kruskal
+7.  Run Dijkstra
+8.  Run Bellman-Ford
+9.  Run all algorithms
+10. Compare algorithms
+0.  Exit
+Select an option: Exiting graph route program.

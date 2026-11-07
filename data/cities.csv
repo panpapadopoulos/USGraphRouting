@@ -1,0 +1,39 @@
+city,state,timezone,latitude,longitude,elevation_ft
+Birmingham,AL,Central,33.5186,-86.8104,644
+Little Rock,AR,Central,34.7465,-92.2896,335
+Hartford,CT,Eastern,41.7658,-72.6734,59
+Wilmington,DE,Eastern,39.7391,-75.5398,92
+Washington,DC,Eastern,38.9072,-77.0369,23
+Miami,FL,Eastern,25.7617,-80.1918,6
+Atlanta,GA,Eastern,33.7490,-84.3880,1050
+Chicago,IL,Central,41.8781,-87.6298,594
+Indianapolis,IN,Eastern,39.7684,-86.1581,718
+Des Moines,IA,Central,41.5868,-93.6250,955
+Wichita,KS,Central,37.6872,-97.3301,1299
+Louisville,KY,Eastern,38.2527,-85.7585,466
+New Orleans,LA,Central,29.9511,-90.0715,7
+Portland,ME,Eastern,43.6591,-70.2568,62
+Baltimore,MD,Eastern,39.2904,-76.6122,33
+Boston,MA,Eastern,42.3601,-71.0589,141
+Detroit,MI,Eastern,42.3314,-83.0458,656
+Minneapolis,MN,Central,44.9778,-93.2650,830
+Jackson,MS,Central,32.2988,-90.1848,279
+Kansas City,MO,Central,39.0997,-94.5786,909
+Omaha,NE,Central,41.2565,-95.9345,1060
+Manchester,NH,Eastern,42.9956,-71.4548,210
+Newark,NJ,Eastern,40.7357,-74.1724,13
+New York,NY,Eastern,40.7128,-74.0060,33
+Charlotte,NC,Eastern,35.2271,-80.8431,761
+Fargo,ND,Central,46.8772,-96.7898,904
+Columbus,OH,Eastern,39.9612,-82.9988,902
+Oklahoma City,OK,Central,35.4676,-97.5164,1201
+Philadelphia,PA,Eastern,39.9526,-75.1652,39
+Providence,RI,Eastern,41.8240,-71.4128,75
+Columbia,SC,Eastern,34.0007,-81.0348,292
+Sioux Falls,SD,Central,43.5446,-96.7311,1470
+Nashville,TN,Central,36.1627,-86.7816,597
+Dallas,TX,Central,32.7767,-96.7970,430
+Burlington,VT,Eastern,44.4759,-73.2121,200
+Richmond,VA,Eastern,37.5407,-77.4360,166
+Charleston,WV,Eastern,38.3498,-81.6326,597
+Milwaukee,WI,Central,43.0389,-87.9065,617
